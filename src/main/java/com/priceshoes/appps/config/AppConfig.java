@@ -13,11 +13,9 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.log4j.Appender;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.DailyRollingFileAppender;
-import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
-import org.apache.log4j.RollingFileAppender;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,7 +45,7 @@ public class AppConfig extends WebMvcConfigurerAdapter
 {
 	private static final Logger log = Logger.getLogger(AppConfig.class);
 	private enum LogLevel {	DEBUG, INFO, WARN, ERROR }
-	private enum LogAppender {	CONSOLE, FILE, ROLLING, DAILY }
+	private enum LogAppender {	CONSOLE, DAILY }
 
 	/** app */
 	@Value("${spring.profiles.active}")	private String profile;
@@ -74,8 +72,6 @@ public class AppConfig extends WebMvcConfigurerAdapter
 	/** log */
 	@Value("${log.error}")				private boolean logError;
 	@Value("${log.pattern}")			private String 	pattern;
-	@Value("${log.maxfilesize}")		private String 	maxFileSize;
-	@Value("${log.maxbackup}")			private int 	maxBackUp;
 	@Value("${log.datepattern}")		private String 	datePattern;
 	@Value("${log.level}")				private String  logLevel;
 	@Value("${log.file}")				private String  logFile;
@@ -94,7 +90,8 @@ public class AppConfig extends WebMvcConfigurerAdapter
 
 	/** Resuelve ${} */
 	@Bean
-	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() {return new PropertySourcesPlaceholderConfigurer();}
+	public static PropertySourcesPlaceholderConfigurer propertyConfigInDev() 
+	{return new PropertySourcesPlaceholderConfigurer();}
 	
 	/************************************************************************************
 	 * CONFIGURACIÓN DE LA BASE DE DATOS *
@@ -103,10 +100,10 @@ public class AppConfig extends WebMvcConfigurerAdapter
 	public LocalSessionFactoryBean sessionFactoryLocal() 
 	{
 		Properties properties = new Properties();
-        properties.put("hibernate.dialect", "org.hibernate.dialect.Oracle10gDialect");
-        properties.put("hibernate.hbm2dll.auto", "validate");
-        properties.put("hibernate.show_sql", jdbcShowSQL);
-        properties.put("current_session_context_class","org.springframework.orm.hibernate4.SpringSessionContext");
+        properties.put("hibernate.dialect", 			"org.hibernate.dialect.Oracle10gDialect");
+        properties.put("hibernate.hbm2dll.auto", 		"validate");
+        properties.put("hibernate.show_sql", 			jdbcShowSQL);
+        properties.put("current_session_context_class",	"org.springframework.orm.hibernate4.SpringSessionContext");
         
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setDataSource(getDataSource());
@@ -116,7 +113,8 @@ public class AppConfig extends WebMvcConfigurerAdapter
 	}
 
 	@Bean
-	public DataSource getDataSource()	{
+	public DataSource getDataSource()	
+	{
 		BasicDataSource dataSource = new BasicDataSource();
 		String url = jdbcUrl;
 		String user= jdbcUser;
@@ -141,22 +139,23 @@ public class AppConfig extends WebMvcConfigurerAdapter
 
 	@Bean
 	@Autowired
-	public HibernateTransactionManager transactionManager(SessionFactory sessionFactory){
+	public HibernateTransactionManager transactionManager(SessionFactory sessionFactory)
+	{
 		HibernateTransactionManager txManager = new HibernateTransactionManager();
 		txManager.setSessionFactory(sessionFactory);
 		return txManager;
 	}
 
 	@Bean
-	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() 	{
-		return new PersistenceExceptionTranslationPostProcessor();
-	}
+	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() 	
+	{ return new PersistenceExceptionTranslationPostProcessor(); }
 
 	/*******************************************************************************
 	 * Configuración del log *
 	 *******************************************************************************/
 	@Bean(name = "logBean")
-	public int logConfig() {
+	public int logConfig() 
+	{
 		Level level;	Appender appender;
 		String file = logFile;
 		LogLevel ll = null;
@@ -172,19 +171,22 @@ public class AppConfig extends WebMvcConfigurerAdapter
 			default:	level = Level.INFO;		break;
 		}
 
-		switch (logAppender) {
-		case DAILY:		appender = getDailyRollingFileAppender(level, file, pattern, datePattern);		break;
-		case FILE:		appender = getFileAppender(level, file, pattern);								break;
-		case ROLLING:	appender = getRollingFileAppender(level, file, pattern, maxFileSize, maxBackUp);break;
-		default:		file = CONSOLE;	appender = getConsoleAppender(level, pattern);					break;}
+		switch (logAppender) 
+		{
+			case DAILY:	appender = getDailyRollingFileAppender(level, file, pattern, datePattern);		break;
+			default:	file = CONSOLE;	appender = getConsoleAppender(level, pattern);					break;
+		}
 		
 		String errorFile = "";
-		if (appender == null) {	appender = getConsoleAppender(level, pattern);	file = CONSOLE;	} 
-		else {
-				if (!CONSOLE.equals(file) && logError) {
-				errorFile = file.replace(".log", "Error.log");
+		if (appender == null) 
+		{	appender = getConsoleAppender(level, pattern);	file = CONSOLE;	} 
+		else 
+		{
+			if (!CONSOLE.equals(file) && logError) 
+			{	errorFile = file.replace(".log", "Error.log");
 				getDailyRollingFileAppender(Level.ERROR, errorFile, pattern, datePattern);
-			}}
+			}
+		}
 
 		log.info("*** Configuración ******");
 		log.info("-- Aplicativo:          " + name);
@@ -202,39 +204,12 @@ public class AppConfig extends WebMvcConfigurerAdapter
 		log.info("-- Proxy:               " + proxyEnabled);
 		log.info("-- Proxy server:        " + proxyServer);
 		// Se deja el system.out de manera intencional para que aparezca en la
-		// salida estandar.
 		System.out.println(" *** Configuración de log " + name + " : " + file);
-
 		return 0;
 	}
 
-	private FileAppender getFileAppender(Level level, String file, String pattern) 	{
-		FileAppender fileAppender = new FileAppender();
-		fileAppender.setThreshold(level);
-		fileAppender.setLayout(new PatternLayout(pattern));
-		fileAppender.setFile(file);
-		fileAppender.activateOptions();
-		Logger.getRootLogger().addAppender(fileAppender);
-		File logFile = new File(file);
-		if (!logFile.exists())fileAppender = null;
-		return fileAppender;
-	}
-
-	private RollingFileAppender getRollingFileAppender(Level level, String file, String pattern,String maxSize, int maxBackups) {
-		RollingFileAppender rolling = new RollingFileAppender();
-		rolling.setThreshold(level);
-		rolling.setLayout(new PatternLayout(pattern));
-		rolling.setFile(file);
-		rolling.setMaxFileSize(maxSize);
-		rolling.setMaxBackupIndex(maxBackups);
-		rolling.activateOptions();
-		Logger.getRootLogger().addAppender(rolling);
-		File logFile = new File(file);
-		if (!logFile.exists())rolling = null;
-		return rolling;
-	}
-
-	private DailyRollingFileAppender getDailyRollingFileAppender(Level level, String file, String pattern, String datePattern){
+	private DailyRollingFileAppender getDailyRollingFileAppender(Level level, String file, String pattern, String datePattern)
+	{
 		DailyRollingFileAppender daily = new DailyRollingFileAppender();
 		daily.setThreshold(level);
 		daily.setLayout(new PatternLayout(pattern));
@@ -247,7 +222,8 @@ public class AppConfig extends WebMvcConfigurerAdapter
 		return daily;
 	}
 
-	private ConsoleAppender getConsoleAppender(Level level, String pattern) {
+	private ConsoleAppender getConsoleAppender(Level level, String pattern) 
+	{
 		ConsoleAppender consoleAppender = new ConsoleAppender();
 		consoleAppender.setLayout(new PatternLayout(pattern));
 		consoleAppender.setThreshold(level);
@@ -259,10 +235,7 @@ public class AppConfig extends WebMvcConfigurerAdapter
 	 @Override
 	 public void addCorsMappings(CorsRegistry registry) 
 	 {
-		if(!proxyEnabled)
-		{
-			registry.addMapping("/**").allowedOrigins("*");	
-		}	
+		if(!proxyEnabled){ registry.addMapping("/**").allowedOrigins("*"); }	
 	 }
 	
 	@Bean
@@ -281,5 +254,4 @@ public class AppConfig extends WebMvcConfigurerAdapter
 		appInfo.setResources(proxyEnabled?proxyServer:resourcesUrl);
 		return appInfo;
 	}
-	
 }

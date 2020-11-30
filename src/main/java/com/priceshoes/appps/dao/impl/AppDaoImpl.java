@@ -15,7 +15,7 @@ import com.priceshoes.appps.response.AppResponse;
 public class AppDaoImpl implements AppDao 
 {
 
-private static Logger log = Logger.getLogger(AppDaoImpl.class);
+	private static Logger log = Logger.getLogger(AppDaoImpl.class);
 	
 	@Autowired
 	private SessionFactory session;
