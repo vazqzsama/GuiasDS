@@ -44,7 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 	@Override
 	protected void configure(HttpSecurity http) throws Exception 
 	{
-
 		http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
 				.and()
 				.authorizeRequests()
@@ -52,5 +51,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 				.antMatchers("/service/**").hasRole(APPLICATION)
 				.and().httpBasic();
 	}
-
 }
