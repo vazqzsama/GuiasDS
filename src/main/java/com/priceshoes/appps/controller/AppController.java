@@ -28,7 +28,7 @@ public class AppController
 		
 		if(request.getEncodedData()!=null)
 		{
-			return new AppResponse(new Parser().encode(service.testConexion(new Parser().decode(request))));
+			return new AppResponse(Parser.ENCODE(service.testConexion(Parser.DECODE(request))));
 		}	
 		else
 		{

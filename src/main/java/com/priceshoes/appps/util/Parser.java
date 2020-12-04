@@ -9,12 +9,12 @@ import com.priceshoes.appps.response.Response;
 public class Parser {
 
 	@SuppressWarnings("unchecked")
-	public <R extends Request> R decode(R request) 
+	public static <R extends Request> R DECODE(R request) 
 	{
 		return (R) new Gson().fromJson(new String(Base64.decodeBase64(request.getEncodedData().getBytes())),request.getClass());
 	}
 	
-	public <R extends Response> String encode(R response) 
+	public static <R extends Response> String ENCODE(R response) 
 	{
 		return new String(Base64.encodeBase64(new Gson().toJson(response).getBytes()));
 	}
