@@ -5,17 +5,17 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.priceshoes</groupId>
 	<artifactId>appps</artifactId>
-	<name>FRONT</name>
+	<name>GuiasDS</name>
 	<packaging>war</packaging>
 	<version>1.0.0</version>
 	<properties>
-		<java-version>1.7</java-version>
-
+		<java-version>1.8</java-version>
 		<org.springframework-version> 4.2.5.RELEASE	</org.springframework-version>
 		<spring.security-version> 4.0.4.RELEASE	</spring.security-version>
 		<log4j-version> 1.2.17</log4j-version>
 		<gson-version> 2.6.2</gson-version>
 		<hibernate.version>4.3.11.Final</hibernate.version>
+		<quartz.version>2.3.0</quartz.version>
 	</properties>
 	<dependencies>
 		<!-- Spring -->
@@ -158,6 +158,19 @@
 			<artifactId>ojdbc6</artifactId>
 			<version>11.2.0.3</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure -->
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-autoconfigure</artifactId>
+		    <version>2.4.5</version>
+		</dependency>
+
+		<dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.version}</version>
+        </dependency>
 
 	</dependencies>
 
