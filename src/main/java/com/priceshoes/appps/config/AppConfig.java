@@ -27,6 +27,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.DefaultServletHandlerConfigurer;
@@ -41,6 +42,7 @@ import com.priceshoes.appps.util.AppInfo;
 @ComponentScan(basePackages = { "com.priceshoes.appps" })
 @Configuration
 @PropertySource("classpath:app-${spring.profiles.active}.properties")
+@EnableScheduling
 public class AppConfig extends WebMvcConfigurerAdapter 
 {
 	private static final Logger log = Logger.getLogger(AppConfig.class);
