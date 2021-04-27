@@ -256,4 +256,5 @@ public class AppConfig extends WebMvcConfigurerAdapter
 		appInfo.setResources(proxyEnabled?proxyServer:resourcesUrl);
 		return appInfo;
 	}
+	
 }

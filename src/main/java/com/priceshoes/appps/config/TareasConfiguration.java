@@ -13,7 +13,6 @@ public class TareasConfiguration {
 
 	private static final Logger log = Logger.getLogger(TareasConfiguration.class);
 	
-	/** cron.properties */
 	@Value("${tGuias.desc}")
 	private String tGuiasDesc;
 	@Value("${tGuias.prefix}")
@@ -27,8 +26,13 @@ public class TareasConfiguration {
     @Scheduled(cron = "${tGuias.cron}")
 	public void tarea1() {
     	if(tGuiasEnabled) {
-    		log.info("Ejecución de tarea("+tGuiasPrefix+"): '"+tGuiasDesc+"'.");
-    		guiaService.ejecucion();
+    		log.info("Inicio Ejecución de tarea("+tGuiasPrefix+"): '"+tGuiasDesc+"'.");
+    		try {
+    			guiaService.ejecucion();
+			} catch (Exception e) {
+				log.error(e);
+			}
+    		log.info("Finalización Ejecución de tarea("+tGuiasPrefix+"): '"+tGuiasDesc+"'.");
     	}
 	}
 }
