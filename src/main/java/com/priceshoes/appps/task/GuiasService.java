@@ -2,7 +2,6 @@ package com.priceshoes.appps.task;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,7 @@ import com.google.gson.Gson;
 import com.priceshoes.appps.util.Constants;
 import com.priceshoes.appps.clients.PaqueteriasClient;
 import com.priceshoes.appps.dao.InfoDao;
-import com.priceshoes.appps.dto.CargamosPicPaq;
+import com.priceshoes.appps.dto.PedidosGuias;
 import com.priceshoes.appps.request.PaqueteriasRequest;
 import com.priceshoes.appps.response.PaqueteriasReponse;
 
@@ -30,41 +29,44 @@ public class GuiasService {
 	
 	public void ejecucion() throws Exception {
 		log.debug("Se esta ejecutando: GuiasJob.execute");
-		List<CargamosPicPaq> listPed = infoDao.getPedidosPendientes();
+		List<PedidosGuias> listPed = infoDao.getPedidosPendientes();
 		if(listPed.isEmpty()) {
 			throw new NullPointerException("No hay pedidos que procesar");
 		} else {
-			listPed.forEach(ped -> {
-				log.info("Pedido a procesar: "+new Gson().toJson(ped));
-				try {
-					PaqueteriasReponse response = cliente.send(createRequest(ped));
-					log.info("Respuesta wsPaqueteria: "+new Gson().toJson(response));
-					if (Objects.nonNull(response)) {
-						if(response.getStatus() == 400 || response.getStatus() == 409 || response.getStatus() == 500) {
-							ped.setCargamosGuia( response.getMessage() );
+			try {
+				listPed.forEach(ped -> {
+					log.info("Pedido a procesar: "+new Gson().toJson(ped));
+					PaqueteriasReponse response = null;
+					try {
+						response = cliente.send(createRequest(ped));
+						log.info("Respuesta wsPaqueteria: "+new Gson().toJson(response));
+						if(response.getStatus() == 400 /*|| response.getStatus() == 409*/ || response.getStatus() == 500) {
+							ped.setGuia( response.getMessage() );
 							ped.setStatus(Constants.GUIA_ERROR);
 						} else {
-							ped.setCargamosGuia(createUrlDocGuia(response.getNumGuiaEnvio(),response.getCvePaqueteria()));
 							ped.setStatus(Constants.GUIA_ENVIADO);
+							ped.setGuia(response.getNumGuiaEnvio());
+							ped.setPaqId(response.getCvePaqueteria());
+							ped.setModifFecha(new Date());
 						}
-						ped.setCargamosId(response.getNumGuiaEnvio());
+					} catch (Exception e) {
+						log.error("No se pudo guardar: "+e.getMessage());
 					}
-				} catch (Exception e) {
-					log.error(e);
-					ped.setStatus(Constants.GUIA_ERROR);
-				}
-				ped.setModifFecha(new Date());
-				try {
-					infoDao.saveRegistro(ped);
-					log.info("Registro Actualizado");
-				} catch (Exception e2) {
-					log.error("No se pudo guardar: "+e2.getMessage());
-				}
-			});
+					
+					try {
+						infoDao.saveRegistro(ped);
+						log.info("Registro Actualizado");
+					} catch (Exception e2) {
+						log.error("No se pudo guardar: "+e2.getMessage());
+					}
+				});
+		} catch (Exception eGlob) {
+			log.error("eGlob: "+eGlob.getMessage());
+		}
 		}
 	}
 	
-	public PaqueteriasRequest createRequest(CargamosPicPaq registro) {
+	public PaqueteriasRequest createRequest(PedidosGuias registro) {
 		PaqueteriasRequest request = new PaqueteriasRequest();
 		request.setCvePaqueteria(null);// Valor en null para que el Api determine de que paqueteria viene el pedido 
 		request.setCveTienda(String.valueOf(registro.getTiCveN()));
@@ -72,12 +74,6 @@ public class GuiasService {
 		request.setReferenciaEnv(String.valueOf(registro.getPtNumN()));
 		log.info("Request: "+new Gson().toJson(request));
 		return request;
-	}
-
-	public String createUrlDocGuia(String guiaId,Long idPaqueteria) {
-		return new StringBuilder(pathGuia).append(guiaId).append(
-				idPaqueteria == 18 ? "_cargamos" : (idPaqueteria == 7 ? "_estafeta" : "_redpack")
-				).append(".pdf").toString();
 	}
 	
 }

@@ -49,12 +49,12 @@ public class PaqueteriasClient implements WsClient {
             		Normalizer.normalize(new Gson().toJson( request ), Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""));
             
             log.info("Status response: "+response.getStatus());
-            if (HttpStatus.valueOf(response.getStatus()).is3xxRedirection())
+            /*if (HttpStatus.valueOf(response.getStatus()).is3xxRedirection())
             	throw new Error("Ocurrio un error (Redireccion): "+response.getStatus()+" -> "+response.getEntity(String.class));
             else if (HttpStatus.valueOf(response.getStatus()).is4xxClientError())
             	throw new Error("Ocurrio un error (Cliente): "+response.getStatus()+" -> "+response.getEntity(String.class));
             else if (HttpStatus.valueOf(response.getStatus()).is5xxServerError())
-            	throw new Error("Ocurrio un error en el servidor: "+response.getStatus()+" -> "+response.getEntity(String.class));
+            	throw new Error("Ocurrio un error en el servidor: "+response.getStatus()+" -> "+response.getEntity(String.class));*/
             
         	return new Gson().fromJson(response.getEntity(String.class),PaqueteriasReponse.class);
 		} catch (Exception e) {

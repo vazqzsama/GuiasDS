@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.gson.Gson;
 import com.priceshoes.appps.dao.InfoDao;
-import com.priceshoes.appps.dto.CargamosPicPaq;
+import com.priceshoes.appps.dto.PedidosGuias;
 import com.priceshoes.appps.dto.Store;
 
 @Repository
@@ -25,8 +25,8 @@ public class InfoDaoImpl implements InfoDao {
 	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public List<CargamosPicPaq> getPedidosPendientes(){
-		return (List<CargamosPicPaq>) session.getCurrentSession().createCriteria(CargamosPicPaq.class)
+	public List<PedidosGuias> getPedidosPendientes(){
+		return (List<PedidosGuias>) session.getCurrentSession().createCriteria(PedidosGuias.class)
 		.add( Restrictions.eq("status", "P") )
 		//.add(Restrictions.or(Restrictions.eq("status", "P"), Restrictions.eq("status", "X")))
 		//.add(Restrictions.ge("fechaPedido", new Date()))
@@ -43,7 +43,7 @@ public class InfoDaoImpl implements InfoDao {
 	
 	@Override
 	@Transactional(readOnly = false)
-	public CargamosPicPaq saveRegistro(CargamosPicPaq pedido){
+	public PedidosGuias saveRegistro(PedidosGuias pedido){
 		log.debug("Pedido a guardar: "+new Gson().toJson(pedido));
 		session.getCurrentSession().saveOrUpdate(pedido);
 		return pedido;
