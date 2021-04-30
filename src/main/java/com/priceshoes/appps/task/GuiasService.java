@@ -45,8 +45,10 @@ public class GuiasService {
 							ped.setStatus(Constants.GUIA_ERROR);
 						} else {
 							ped.setStatus(Constants.GUIA_ENVIADO);
-							ped.setGuia(response.getNumGuiaEnvio());
-							ped.setPaqId(response.getCvePaqueteria());
+							if (response.getStatus() != 409) {
+								ped.setGuia(response.getNumGuiaEnvio());
+								ped.setPaqId(response.getCvePaqueteria());
+							}
 							ped.setModifFecha(new Date());
 						}
 					} catch (Exception e) {
