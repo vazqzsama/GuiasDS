@@ -33,10 +33,10 @@ public class PedidosGuias implements Serializable {
 	@Column(name = "ID_N", updatable = false)
 	private long id;
 
-	@Column(name = "PT_NUM_N", updatable = false, insertable = false)
+	@Column(name = "PT_NUM_N")
 	private int ptNumN;
 
-	@Column(name = "TI_CVE_N", updatable = false, insertable = false)
+	@Column(name = "TI_CVE_N")
 	private int tiCveN;
 
 	@Column(name = "ID_PAQ_N")
@@ -57,6 +57,9 @@ public class PedidosGuias implements Serializable {
 
 	@Column(name = "FALTA_DT", updatable = false)
 	private Date fechaPedido;
+	
+	@Column(name = "REENVIO")
+	private int reenvio;
 	
 	public PedidosGuias() {
 	}

@@ -42,7 +42,10 @@ public class GuiasService {
 						log.info("Respuesta wsPaqueteria: "+new Gson().toJson(response));
 						if(response.getStatus() == 400 /*|| response.getStatus() == 409*/ || response.getStatus() == 500) {
 							ped.setGuia( response.getMessage() );
-							ped.setStatus(Constants.GUIA_ERROR);
+							if(ped.getReenvio() == 1)
+								ped.setStatus(Constants.GUIA_ERROR);
+							else if(ped.getReenvio() == 0)
+								ped.setReenvio(1);
 						} else {
 							ped.setStatus(Constants.GUIA_ENVIADO);
 							ped.setGuia(response.getNumGuiaEnvio());
