@@ -21,7 +21,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "PEDIDOS_GUIAS_API" ,schema = "PSWEBLOG" )
+@Table(name = "PEDIDOS_GUIAS_API" ,schema = "PSIWEB" )
 public class PedidosGuias implements Serializable {
 
 	private static final long serialVersionUID = 1L;

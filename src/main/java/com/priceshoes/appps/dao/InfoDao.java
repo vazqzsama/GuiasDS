@@ -11,4 +11,6 @@ public interface InfoDao {
 	String getIdPaqueteria(int pedido);
 	
 	PedidosGuias saveRegistro(PedidosGuias pedido);
+	
+	String getPtNumMagento(int ptNum,int tiCve);
 }

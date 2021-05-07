@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class InfoDaoImpl implements InfoDao {
 	private static Logger log = Logger.getLogger(InfoDaoImpl.class);
 	@Autowired
 	private SessionFactory session;
+	@Value("${spring.profiles.active}")	private String profile;
 	
 	@Override
 	@SuppressWarnings("unchecked")
@@ -47,6 +49,14 @@ public class InfoDaoImpl implements InfoDao {
 		log.debug("Pedido a guardar: "+new Gson().toJson(pedido));
 		session.getCurrentSession().saveOrUpdate(pedido);
 		return pedido;
+	}
+
+	@Override
+	public String getPtNumMagento(int ptNum, int tiCve) {
+		Store result = (Store) session.getCurrentSession()
+				.getNamedQuery(profile.trim().equals("TEST") ? "PEDIDO_MAGENTO_TEST" : "PEDIDO_MAGENTO_PROD" )
+				.setParameter("ptNum", ptNum).setParameter("tiCve", tiCve).uniqueResult();
+		return result.getValue();
 	}
 	
 	

@@ -74,7 +74,7 @@ public class GuiasService {
 		request.setCvePaqueteria(null);// Valor en null para que el Api determine de que paqueteria viene el pedido 
 		request.setCveTienda(String.valueOf(registro.getTiCveN()));
 		request.setNumPedido(String.valueOf(registro.getPtNumN()));
-		request.setReferenciaEnv(String.valueOf(registro.getPtNumN()));
+		request.setReferenciaEnv(infoDao.getPtNumMagento(registro.getPtNumN(), registro.getTiCveN()));
 		log.info("Request: "+new Gson().toJson(request));
 		return request;
 	}
