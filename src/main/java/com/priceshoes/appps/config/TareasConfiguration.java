@@ -3,7 +3,6 @@ package com.priceshoes.appps.config;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -18,19 +17,22 @@ public class TareasConfiguration {
 	private String tGuiasDesc;
 	@Value("${tGuias.prefix}")
 	private String tGuiasPrefix;
+	@Value("${tGuias.enabled}")
+	private boolean tGuiasEnabled;
 	
 	@Autowired
 	private GuiasService guiaService;
 	
     @Scheduled(cron = "${tGuias.cron}")
-    @ConditionalOnProperty(name = "tGuias.enabled")
 	public void envioGuias() {
-		log.info("Inicio Ejecución de tarea("+tGuiasPrefix+"): '"+tGuiasDesc+"'.");
-		try {
-			guiaService.ejecucion();
-		} catch (Exception e) {
-			log.error(e);
-		}
-		log.info("Finalización Ejecución de tarea("+tGuiasPrefix+"): '"+tGuiasDesc+"'.");
+    	if(tGuiasEnabled) {
+			log.info("Inicio Ejecución de tarea("+tGuiasPrefix+"): '"+tGuiasDesc+"'.");
+			try {
+				guiaService.ejecucion();
+			} catch (Exception e) {
+				log.error(e);
+			}
+			log.info("Finalización Ejecución de tarea("+tGuiasPrefix+"): '"+tGuiasDesc+"'.");
+    	}
 	}
 }

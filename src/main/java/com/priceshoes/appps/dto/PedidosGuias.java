@@ -21,14 +21,14 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(name = "PEDIDOS_GUIAS_API" ,schema = "PSIWEB" )
+@Table(name = "PEDIDOS_GUIAS_API" /*,schema = "PSIWEB"*/ )
 public class PedidosGuias implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	//@SequenceGenerator(name = "CARGAMOS_PICKING_PACKING_SEQUENCE", sequenceName = "CPP_SEQUENCE@lrcorpprice",schema = "PPVMX" )
-	@SequenceGenerator(name = "PEDIDOS_GUIAS_API_SEQUENCE", sequenceName = "SEQ_PEDIDOS_GUIAS_API",schema = "PSWEBLOG" )
+	@SequenceGenerator(name = "PEDIDOS_GUIAS_API_SEQUENCE", sequenceName = "SEQ_PEDIDOS_GUIAS_API"/*,schema = "PSIWEB"*/ )
+	//@SequenceGenerator(name = "PEDIDOS_GUIAS_API_SEQUENCE", sequenceName = "SEQ_PEDIDOS_GUIAS_API",schema = "PSWEBLOG" )
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "PEDIDOS_GUIAS_API_SEQUENCE")
 	@Column(name = "ID_N", updatable = false)
 	private long id;

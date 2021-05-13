@@ -23,7 +23,7 @@ import org.hibernate.annotations.NamedNativeQuery;
 ),
 @NamedNativeQuery (
 		name="PEDIDO_MAGENTO_PROD",
-		query="select TI_CVE_N as ID,PTM_MAGENTO_STR AS VALUE from UDONLINE.PS_PEDTMK_MAGENTO where PT_NUM_N = :ptNum AND TI_CVE_N = :tiCve",
+		query="select TI_CVE_N as ID,PTM_MAGENTO_STR AS VALUE from UDONLINE.PS_PEDTMK_MAGENTO@LRCORPPRICE where PT_NUM_N = :ptNum AND TI_CVE_N = :tiCve",
 		callable = false,
 		resultClass=Store.class
 	)
