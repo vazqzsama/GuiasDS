@@ -12,6 +12,7 @@ import com.priceshoes.appps.request.AppRequest;
 import com.priceshoes.appps.response.AppResponse;
 import com.priceshoes.appps.service.AppService;
 import com.priceshoes.appps.task.GuiasService;
+import com.priceshoes.appps.task.PedidosVendidosService;
 import com.priceshoes.appps.util.Parser;
 
 @RestController
@@ -22,6 +23,7 @@ public class AppController
 	
 	@Autowired private AppService service;
 	@Autowired private GuiasService guiaService;
+	@Autowired private PedidosVendidosService pedVenService;
 	
 	@RequestMapping(value = "/testConexion")
 	public AppResponse testConexion(@RequestBody AppRequest request)
@@ -45,6 +47,19 @@ public class AppController
 		try {
 			guiaService.ejecucion();
 			return "Finalización Exitosa Ejecución de envio de guias manual";
+		} catch (Exception e) {
+			log.error(e);
+			return "Se genero un error: "+e.getMessage();
+		}
+	}
+	
+	@RequestMapping(value = "/insercionManual",method = RequestMethod.GET)
+	public String insercionManual() {
+		log.debug("Probando el servicio de test ");
+		log.info("Inicio Ejecución de insercion de pedidos manual");
+		try {
+			pedVenService.execute();
+			return "Finalización Exitosa Ejecución de insercion de pedidos manual";
 		} catch (Exception e) {
 			log.error(e);
 			return "Se genero un error: "+e.getMessage();

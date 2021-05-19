@@ -23,7 +23,7 @@ public class DireccionEnvio implements Serializable {
 	private String numeroExt;
 	private String ciudad;
 	private String colonia;
-	private String sp;
+	private String cp;
 	private String telCasa;
 	private String telCelular;
 	private String entreCalles;

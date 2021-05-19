@@ -34,10 +34,10 @@ public class PedidosGuias implements Serializable {
 	private long id;
 
 	@Column(name = "PT_NUM_N")
-	private int ptNumN;
+	private Long ptNumN;
 
 	@Column(name = "TI_CVE_N")
-	private int tiCveN;
+	private Long tiCveN;
 
 	@Column(name = "ID_PAQ_N")
 	private Long paqId;
@@ -60,8 +60,22 @@ public class PedidosGuias implements Serializable {
 	
 	@Column(name = "REENVIO")
 	private int reenvio;
+
+	@Column(name = "CP_STR")
+	private String cp;
 	
 	public PedidosGuias() {
+		super();
 	}
-
+	
+	public PedidosGuias(PedidosVendidos ped) {
+		super();
+		this.ptNumN = ped.getPtNum();
+		this.tiCveN = ped.getTiCve();
+		this.status = "P";
+		this.origen = "M";
+		this.fechaPedido = new Date();
+		this.reenvio = 0;
+	}
+	
 }

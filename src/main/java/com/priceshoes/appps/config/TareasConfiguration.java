@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.priceshoes.appps.task.GuiasService;
+import com.priceshoes.appps.task.PedidosVendidosService;
 
 @Component
 public class TareasConfiguration {
@@ -19,9 +20,17 @@ public class TareasConfiguration {
 	private String tGuiasPrefix;
 	@Value("${tGuias.enabled}")
 	private boolean tGuiasEnabled;
+	@Value("${pedVend.desc}")
+	private String pedVendDesc;
+	@Value("${pedVend.prefix}")
+	private String pedVendPrefix;
+	@Value("${pedVend.enabled}")
+	private boolean pedVendEnabled;
 	
 	@Autowired
 	private GuiasService guiaService;
+	@Autowired
+	private PedidosVendidosService pvService;
 	
     @Scheduled(cron = "${tGuias.cron}")
 	public void envioGuias() {
@@ -33,6 +42,19 @@ public class TareasConfiguration {
 				log.error(e);
 			}
 			log.info("Finalización Ejecución de tarea("+tGuiasPrefix+"): '"+tGuiasDesc+"'.");
+    	}
+	}
+    
+    @Scheduled(cron = "${pedVend.cron}")
+	public void insertPedidos() {
+    	if(pedVendEnabled) {
+			log.info("Inicio Ejecución de tarea("+pedVendPrefix+"): '"+pedVendDesc+"'.");
+			try {
+				pvService.execute();
+			} catch (Exception e) {
+				log.error(e);
+			}
+			log.info("Finalización Ejecución de tarea("+pedVendPrefix+"): '"+pedVendDesc+"'.");
     	}
 	}
 }

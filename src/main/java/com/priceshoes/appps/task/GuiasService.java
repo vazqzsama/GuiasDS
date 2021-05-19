@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.gson.Gson;
@@ -20,8 +19,6 @@ import com.priceshoes.appps.response.PaqueteriasReponse;
 public class GuiasService {
 
 	private static final Logger log = Logger.getLogger(GuiasService.class);
-	@Value("${pdfGuia.path}")
-	private String pathGuia;
 	@Autowired
 	private PaqueteriasClient cliente;
 	@Autowired
@@ -30,6 +27,7 @@ public class GuiasService {
 	public void ejecucion() throws Exception {
 		log.debug("Se esta ejecutando: GuiasJob.execute");
 		List<PedidosGuias> listPed = infoDao.getPedidosPendientes();
+		
 		if(listPed.isEmpty()) {
 			throw new NullPointerException("No hay pedidos que procesar");
 		} else {
@@ -51,6 +49,7 @@ public class GuiasService {
 							ped.setGuia(response.getNumGuiaEnvio());
 							ped.setPaqId(response.getCvePaqueteria());
 							ped.setModifFecha(new Date());
+							ped.setCp(response.getDireccionEnvio().getCp());
 						}
 					} catch (Exception e) {
 						log.error("No se pudo guardar: "+e.getMessage());

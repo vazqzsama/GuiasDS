@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.gson.Gson;
 import com.priceshoes.appps.dao.InfoDao;
 import com.priceshoes.appps.dto.PedidosGuias;
+import com.priceshoes.appps.dto.PedidosVendidos;
 import com.priceshoes.appps.dto.Store;
 
 @Repository
@@ -52,12 +53,18 @@ public class InfoDaoImpl implements InfoDao {
 	}
 
 	@Override
-	public String getPtNumMagento(int ptNum, int tiCve) {
+	public String getPtNumMagento(Long ptNum, Long tiCve) {
 		Store result = (Store) session.getCurrentSession()
 				.getNamedQuery(profile.trim().equals("TEST") ? "PEDIDO_MAGENTO_TEST" : "PEDIDO_MAGENTO_PROD" )
 				.setParameter("ptNum", ptNum).setParameter("tiCve", tiCve).uniqueResult();
 		return result.getValue();
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = true)
+	public List<PedidosVendidos> getPedidosVendidos(){
+		return (List<PedidosVendidos>) session.getCurrentSession().getNamedQuery("PEDIDOS_VENDIDOS").list();
+	}
 	
 }

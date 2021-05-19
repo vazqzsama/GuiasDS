@@ -3,6 +3,7 @@ package com.priceshoes.appps.dao;
 import java.util.List;
 
 import com.priceshoes.appps.dto.PedidosGuias;
+import com.priceshoes.appps.dto.PedidosVendidos;
 
 public interface InfoDao {
 	
@@ -12,5 +13,7 @@ public interface InfoDao {
 	
 	PedidosGuias saveRegistro(PedidosGuias pedido);
 	
-	String getPtNumMagento(int ptNum,int tiCve);
+	String getPtNumMagento(Long ptNum,Long tiCve);
+	
+	List<PedidosVendidos> getPedidosVendidos();
 }
